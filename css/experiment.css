@@ -4,19 +4,19 @@ html, body {
 }
 
 .stimulus {
-    font-size: 20px;
+    font-size: 14px;
     font-family: monospace;
     color: white;
 }
 
 .mask {
     color: white;
-    font-size: 20px;
+    font-size: 14px;
     font-family: monospace;
 }
 
 .fixation {
-    font-size: 20px;
+    font-size: 14px;
     color: white;
     font-family: monospace;
 }
