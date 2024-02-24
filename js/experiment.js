@@ -4,6 +4,8 @@ const timeline = [];
 
 var subject_id = jsPsych.randomization.randomID(6);
 
+const condition = jsPsych.randomization.sampleWithoutReplacement(['moral-first', 'fashion-first'])[0]
+
 const instruction = {
   type: jsPsychHtmlKeyboardResponseRaf,
   stimulus: `
@@ -15,32 +17,7 @@ const instruction = {
   post_trial_gap: 2000
 };
 
-const practice = {
-  type: jsPsychHtmlKeyboardResponseRaf,
-  stimulus: `
-  <p>You have now completed all 20 practice trials.</p> 
-  <p>Once the experimenter has left the room, press the spacebar to move on to the experiment.</p>
-`,
-  choices: [' '],
-  post_trial_gap: 2000
-};
-
-const button = {
-  type: jsPsychHtmlButtonResponse,
-  stimulus: '<p> <strong> A or B? </strong></p>',
-  choices: ['A', 'B'],
-  prompt: "<p>Experimenter: Please choose A or B</p>",
-  data: {
-    task: 'button'
-  },
-  on_finish: (data) => {
-    data.experiment_order = data.response == 0 ? "moral-first" : "fashion-first"
-  }
-};
-
 const trial = [];
-
-const trial_practice = []
 
 const fixation = {
   type: jsPsychHtmlKeyboardResponseRaf,
@@ -52,40 +29,6 @@ const fixation = {
     // round duration to the nearest 16.667 ms
     duration = Math.round(duration / 16.667) * 16.667;
     return duration;
-  }
-};
-
-var practice_word_count = 0;
-
-const word_practice = {
-  type: jsPsychHtmlKeyboardResponseRaf,
-  stimulus: jsPsych.timelineVariable('word'),
-  choices: "NO_KEYS",
-  trial_duration: function () {
-    if (practice_word_count < 4) {
-      practice_word_count++;
-      return 300;
-    }
-    else if (practice_word_count < 8) {
-      practice_word_count++;
-      return 150;
-    }
-    else if (practice_word_count < 12) {
-      practice_word_count++;
-      return 60;
-    }
-    else if (practice_word_count < 16) {
-      practice_word_count++;
-      return 30;
-    }
-    else if (practice_word_count < 20) {
-      practice_word_count++;
-      return 17;
-    }
-  },
-  css_classes: ['stimulus'],
-  data: {
-    task: 'word_display',
   }
 };
 
@@ -135,18 +78,7 @@ const response = {
 
 trial.push(fixation, word, mask, response);
 
-trial_practice.push(fixation, word_practice, mask, response)
-
-const test_procedure_practice = {
-  timeline: trial_practice,
-  timeline_variables: practice_stimuli,
-  randomize_order: true,
-  data: {
-    phase: 'practice'
-  }
-}
-
-timeline.push(subject_id_entry, button, waiting_to_start, instruction);
+timeline.push(instruction);
 
 const fashion_shuffled = jsPsych.randomization.shuffle(fashion_stimuli);
 const fashion_blocks = [
@@ -214,8 +146,7 @@ const block_break = {
   type: jsPsychHtmlKeyboardResponseRaf,
   stimulus: `
     <p>You can take a short break.</p>
-    <p>Please wait for the experimenter to signal that you can continue.</p> 
-    <p>Once the experimenter has said you can continue, press the spacebar.</p>
+    <p>When you are ready to continue, press the spacebar.</p>
   `,
   choices: [' '],
   post_trial_gap: 2000
@@ -240,12 +171,7 @@ const if_procedure_f = {
   conditional_function: function () {
     // get the data from the button trial,
     // and check which key was pressed
-    data = jsPsych.data.get().filter({ task: 'button' }).values()[0]
-    if (data.response == 1) {
-      return true;
-    } else {
-      return false;
-    }
+    return condition == "fashion-first";
   }
 }
 
@@ -254,12 +180,7 @@ const if_procedure_m = {
   conditional_function: function () {
     // get the data from the button trial,
     // and check which key was pressed
-    data = jsPsych.data.get().filter({ task: 'button' }).values()[0]
-    if (data.response == 0) {
-      return true;
-    } else {
-      return false;
-    }
+    return condition == "moral-first"
   }
 }
 
@@ -279,12 +200,7 @@ const if_procedure_f2 = {
   conditional_function: function () {
     // get the data from the previous trial,
     // and check which key was pressed
-    data = jsPsych.data.get().filter({ task: 'button' }).values()[0]
-    if (data.response == 0) {
-      return true;
-    } else {
-      return false;
-    }
+    return condition = "moral-first";
   }
 }
 
@@ -293,12 +209,7 @@ const if_procedure_m2 = {
   conditional_function: function () {
     // get the data from the previous trial,
     // and check which key was pressed
-    data = jsPsych.data.get().filter({ task: 'button' }).values()[0]
-    if (data.response == 1) {
-      return true;
-    } else {
-      return false;
-    }
+    return condition = "fashion-first"
   }
 }
 
@@ -309,7 +220,6 @@ const debrief_block =
     <div style='width: 700px;'>
       <p>You have now completed the experiment.</p>
       <p>Thank you for your participation.</p>
-      <p>Please wait for the experimenter to return to the test room.</p>
     </div>
   `,
   choices: "NO_KEYS",
