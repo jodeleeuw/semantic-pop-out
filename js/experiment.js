@@ -62,8 +62,7 @@ const response = {
   type: jsPsychHtmlKeyboardResponseRaf,
   stimulus: "",
   choices: ['1', '5'],
-  trial_duration: 1500,
-  response_ends_trial: false,
+  response_ends_trial: true,
   data: {
     is_word: jsPsych.timelineVariable('is_word'),
     word_type: jsPsych.timelineVariable('word_type'),
