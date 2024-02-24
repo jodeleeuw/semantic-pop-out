@@ -73,7 +73,14 @@ const response = {
   }
 }
 
-trial.push(fixation, word, mask, response);
+const blank = {
+  type: jsPsychHtmlKeyboardResponseRaf,
+  stimulus: "",
+  choices: "NO_KEYS",
+  trial_duration: 500,
+}
+
+trial.push(fixation, word, mask, response, blank);
 
 timeline.push(instruction);
 
