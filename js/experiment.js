@@ -25,9 +25,7 @@ const fixation = {
   choices: "NO_KEYS",
   css_classes: ['fixation'],
   trial_duration: () => {
-    var duration = Math.random() * 300 + 400; // min time is 400ms, max time is 700ms
-    // round duration to the nearest 16.667 ms
-    duration = Math.round(duration / 16.667) * 16.667;
+    const duration = jsPsych.randomization.sampleWithoutReplacement([100,200,300])[0];
     return duration;
   }
 };
